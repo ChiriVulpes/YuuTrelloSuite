@@ -124,7 +124,8 @@ function refreshListButtons(data) {
 }
 
 chrome.storage.sync.get("TrelloListToggle:data", (data) => {
-	data = JSON.parse(data["TrelloListToggle:data"]);
+	data = data["TrelloListToggle:data"];
+	data = data ? JSON.parse(data) : {};
 	setTimeout(() => {
 		setInterval(refreshListButtons.bind(undefined, data), 20);
 	}, 1000);
