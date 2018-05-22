@@ -173,7 +173,7 @@ function refresh(data) {
 
 		console.log("refreshed");
 
-		const toRemove = document.querySelectorAll("#list-toggle-buttons-start, #list-toggle-buttons-start ~ *");
+		const toRemove = document.querySelectorAll("#list-toggle-buttons-start, #list-toggle-buttons-start ~ *, .birds-eye-button");
 		for (const element of toRemove) {
 			element.remove();
 		}
@@ -240,7 +240,32 @@ function refresh(data) {
 				needsRefresh = true;
 			});
 		}
+
+
+		////////////////////////////////////
+		// Birds Eye Button
+		//
+
+		const buttonContainerRight = document.querySelector(".board-header-btns.mod-right");
+		const birdsEyeButton = document.createElement("a");
+		birdsEyeButton.classList.add("board-header-btn", "board-header-btn-without-icon", "birds-eye-button");
+		birdsEyeButton.textContent = boardData.__isBirdsEye === true ? "Normal Size" : "Compressed Size";
+		birdsEyeButton.href = "#";
+		buttonContainerRight.insertBefore(birdsEyeButton, document.querySelector(".board-header-btns.mod-right > .js-plugin-header-btns"));
+
+		document.body.classList.toggle("birds-eye", boardData.__isBirdsEye === true);
+		birdsEyeButton.addEventListener("click", () => {
+			document.body.classList.toggle("birds-eye");
+			isDirty = true;
+			boardData.__isBirdsEye = document.body.classList.contains("birds-eye");
+			birdsEyeButton.textContent = boardData.__isBirdsEye === true ? "Normal Size" : "Compressed Size";
+		});
 	}
+
+
+	////////////////////////////////////
+	// Save extension data
+	//
 
 	if (isDirty) {
 		isDirty = false;
@@ -250,39 +275,14 @@ function refresh(data) {
 	}
 }
 
-function setup(data) {
-	////////////////////////////////////
-	// Birds Eye Button
-	//
-
-	const buttonContainerRight = document.querySelector(".board-header-btns.mod-right");
-	const birdsEyeButton = document.createElement("a");
-	birdsEyeButton.classList.add("board-header-btn", "board-header-btn-without-icon", "birds-eye-button");
-	birdsEyeButton.textContent = data.__isBirdsEye === true ? "Normal Size" : "Compressed Size";
-	birdsEyeButton.href = "#";
-	buttonContainerRight.insertBefore(birdsEyeButton, document.querySelector(".board-header-btns.mod-right > .js-plugin-header-btns"));
-
-	document.body.classList.toggle("birds-eye", data.__isBirdsEye === true);
-	birdsEyeButton.addEventListener("click", () => {
-		document.body.classList.toggle("birds-eye");
-		isDirty = true;
-		data.__isBirdsEye = document.body.classList.contains("birds-eye");
-		birdsEyeButton.textContent = data.__isBirdsEye === true ? "Normal Size" : "Compressed Size";
-	});
-
-	////////////////////////////////////
-	// Start the main loop
-	//
-
-	setInterval(refresh.bind(null, data), 20);
-}
-
 ////////////////////////////////////
-// Get the data, wait one second
+// Get the data, wait one second, then refresh every 20ms
 //
 
 chrome.storage.sync.get("TrelloListToggle:data", (data) => {
 	data = data["TrelloListToggle:data"];
 	data = data ? JSON.parse(data) : {};
-	setTimeout(setup.bind(null, data), 1000);
+	setTimeout(() => {
+		setInterval(refresh.bind(null, data), 20);
+	}, 1000);
 });
