@@ -131,10 +131,6 @@ input[type=submit]:hover {
     background-color: var(--bg-button-hover);
 }
 
-.board-menu-navigation-item-link:not(.disabled):hover {
-    background-color: var(--bg-drawer-link-hover);
-}
-
 .open-card-composer:hover {
     background-color: var(--bg-composer-hover);
 }
@@ -174,7 +170,11 @@ input[type=submit]:hover {
 a.helper:hover,
 .pika-single .pika-next:hover, 
 .pika-single .pika-prev:hover,
-.pika-single .pika-label:hover {
+.pika-single .pika-label:hover,
+.show-more:hover,
+.directory-sidebar li:not(.directory-categories):hover,
+.board-menu-section-header:hover,
+.board-menu-navigation-item-link:not(.disabled):hover {
     background-color: var(--bg-drawer-link-hover);
 }
 
@@ -355,11 +355,6 @@ tbody {
     background-color: var(--bg-count);
 }
 
-.directory-sidebar li:not(.directory-categories):hover,
-.board-menu-section-header:hover {
-    background-color: var(--bg-drawer-link-hover);
-}
-
 .product-promo-disable-overlay {
     background-color: var(--bg-drawer);
     opacity: .7;
@@ -437,6 +432,10 @@ tbody {
 
 .phenom.mod-comment-type .action-comment:hover {
     background-color: var(--bg-comment-hover);
+}
+
+.phenom.mod-highlighted {
+    background: var(--bg-quiet);
 }
 
 
@@ -868,7 +867,8 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
 }
 
 /* Well styled powerup navigation links */
-.directory-sidebar li:not(.directory-categories) {
+.directory-sidebar li:not(.directory-categories),
+.show-more {
     padding: 6px;
     border-radius: 3px;
     margin: 0;
