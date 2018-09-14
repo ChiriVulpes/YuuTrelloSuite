@@ -80,7 +80,12 @@ textarea:hover {
 input[type=email]:focus, 
 input[type=password]:focus, 
 input[type=text]:focus, 
-textarea:focus {
+textarea:focus,
+textarea.mod-card-back-title.is-editing, 
+textarea.mod-card-back-title:focus,
+.checklist-new-item.focus textarea.checklist-new-item-text, 
+.checklist-new-item.focus textarea.checklist-new-item-text:focus, 
+.checklist-new-item.focus textarea.checklist-new-item-text:hover {
     background-color: var(--bg-input-focus);
 }
 
@@ -118,7 +123,8 @@ input[type=submit]:hover {
     background-color: var(--bg-comment);
 }
 
-.list-card.active-card {
+.list-card.active-card,
+.list-card.ui-sortable-helper .list-card-details{
     background-color: var(--bg-card-hover);
 }
 
@@ -430,7 +436,7 @@ tbody {
     background-color: var(--bg-archive-banner);
 }
 
-.phenom.mod-comment-type .action-comment:hover {
+.phenom.mod-comment-type .action-card ~ .comment-container .action-comment:hover {
     background-color: var(--bg-comment-hover);
 }
 
@@ -664,8 +670,14 @@ pre code {
     color: var(--c-a-hover);
 }
 
-.phenom.mod-comment-type .action-comment:hover {
+.phenom.mod-comment-type .action-card ~ .comment-container .action-comment:hover {
     color: var(--c-text-hover);
+}
+
+.checklist-new-item.focus textarea.checklist-new-item-text, 
+.checklist-new-item.focus textarea.checklist-new-item-text:focus, 
+.checklist-new-item.focus textarea.checklist-new-item-text:hover {
+	color: inherit;
 }
 
 
@@ -718,6 +730,9 @@ table, td, th {
     --bg-scrollbar-track-piece: #141517;
     --bg-scrollbar-thumb: var(--bg-card);
     --bg-scrollbar-thumb-hover: var(--bg-card-hover);
+    --bg-scrollbar-card-track-piece: #0003;
+    --bg-scrollbar-card-thumb: #89aab544;
+    --bg-scrollbar-card-thumb-hover: #94a8bd80;
 }
 
 /* scrollbars */
@@ -734,8 +749,7 @@ pre::-webkit-scrollbar-thumb:vertical,
 pre::-webkit-scrollbar-thumb:horizontal,
 .pop-over textarea::-webkit-scrollbar-thumb:vertical,
 .pop-over textarea::-webkit-scrollbar-thumb:horizontal,
-.directory-body::-webkit-scrollbar-thumb:vertical,
-.directory-body::-webkit-scrollbar-thumb:horizontal {
+.directory-body::-webkit-scrollbar-thumb {
     background: var(--bg-scrollbar-thumb);
 }
 
@@ -745,9 +759,20 @@ pre::-webkit-scrollbar-thumb:vertical:hover,
 pre::-webkit-scrollbar-thumb:horizontal:hover,
 .pop-over textarea::-webkit-scrollbar-thumb:vertical:hover,
 .pop-over textarea::-webkit-scrollbar-thumb:horizontal:hover,
-.directory-body::-webkit-scrollbar-thumb:vertical:hover,
-.directory-body::-webkit-scrollbar-thumb:horizontal:hover {
+.directory-body::-webkit-scrollbar-thumb:hover {
     background: var(--bg-scrollbar-thumb-hover);
+}
+
+.list-card::-webkit-scrollbar-track-piece {
+    background: var(--bg-scrollbar-card-track-piece);
+}
+
+.list-card::-webkit-scrollbar-thumb {
+    background: var(--bg-scrollbar-card-thumb);
+}
+
+.list-card::-webkit-scrollbar-thumb:hover {
+    background: var(--bg-scrollbar-card-thumb-hover);
 }
 
 .directory-body::-webkit-scrollbar,
@@ -779,7 +804,8 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
     height: 48px;
 }
 
-.pop-over textarea::-webkit-scrollbar {
+.pop-over textarea::-webkit-scrollbar,
+.list-card::-webkit-scrollbar {
     height: 8px;
     width: 8px;
 }
@@ -828,8 +854,13 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
     padding-bottom: 6px;
 }
 
-/* pretty outlines on powerup preview images */
-.directory-individual-listing .directory-listing-content img {
+/* pretty outlines on preview images */
+.attachment-image-preview {
+	border: none;
+}
+
+.directory-individual-listing .directory-listing-content img,
+.attachment-image-preview {
     content: "";
     position: relative;
     height: 0;
@@ -838,7 +869,8 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
     display: inline-block;
 }
 
-.directory-individual-listing .directory-listing-content img::before {
+.directory-individual-listing .directory-listing-content img::before,
+.attachment-image-preview::before {
     content: "";
     width: 100%;
     height: 100%;
@@ -846,9 +878,11 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
     top: 0;
     left: 0;
     background: var(--bg-directory);
+    border-radius: 4px;
 }
 
-.directory-individual-listing .directory-listing-content img::after {
+.directory-individual-listing .directory-listing-content img::after,
+.attachment-image-preview::after {
     content: "";
     width: 100%;
     height: 100%;
@@ -858,6 +892,7 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
     background: var(--img);
     background-size: contain;
     box-shadow: inset 0 0 0 1px #fff2;
+    border-radius: 4px;
 }
 
 /* take out this ruleset if you want curved scrollbars */
@@ -889,8 +924,122 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
 }
 
 /* fix trello styling the cursor of activity comments based on whether you can edit, when it should just always be pointer (they're links) */
-.phenom.mod-comment-type .action-comment {
+.phenom.mod-comment-type .action-card ~ .comment-container .action-comment {
     cursor: pointer;
+}
+
+/* pretty member avatar borders */
+.member::after {
+    box-shadow: inset 0 0 0 1px #afe2, 0 1px 2px #0007;
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 25em;
+}
+
+.birds-eye .list-card-members .member::after {
+    box-shadow: inset 0 0 0 1px #afe2;
+    top: -4px;
+}
+
+.list-card-members {
+    margin-right: 2px;
+}
+
+/* hover effects for notifications — this is really complex but there's not much i can do about it
+ * it was designed poorly by trello
+ */
+.phenom.mod-is-card .content-wrapper, 
+.phenom.mod-is-card.mod-unread .content-wrapper, 
+.phenom.mod-is-not-card .content-wrapper, 
+.phenom.mod-is-not-card.mod-unread .content-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.notification .phenom-member {
+    position: relative;
+}
+
+.notification .content-wrapper:hover::before,
+.notification .phenom-member:hover::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 3px;
+    width: calc(100% - 6px);
+    height: calc(100% - 2px);
+    background: var(--bg-quiet);
+    border-radius: 4px;
+    z-index: -5;
+}
+
+.notification .phenom-member:hover::before {
+    top: 10px;
+    height: calc(100% - 11px);
+}
+
+.phenom.mod-is-card .archive+.notification .phenom-member:hover::before, 
+.phenom.mod-is-card .archive .notification:first-of-type .phenom-member:hover::before, 
+.phenom.mod-is-card.mod-unread .archive+.notification .phenom-member:hover::before, 
+.phenom.mod-is-card.mod-unread .archive .notification:first-of-type .phenom-member:hover::before, 
+.phenom.mod-is-not-card .archive+.notification .phenom-member:hover::before, 
+.phenom.mod-is-not-card .archive .notification:first-of-type .phenom-member:hover::before, 
+.phenom.mod-is-not-card.mod-unread .archive+.notification .phenom-member:hover::before, 
+.phenom.mod-is-not-card.mod-unread .archive .notification:first-of-type .phenom-member:hover::before {
+    top: 3px;
+    height: calc(100% - 4px);
+}
+
+.phenom.mod-is-card .content-wrapper .phenom-spacer, 
+.phenom.mod-is-card.mod-unread .content-wrapper .phenom-spacer, 
+.phenom.mod-is-not-card .content-wrapper .phenom-spacer, 
+.phenom.mod-is-not-card.mod-unread .content-wrapper .phenom-spacer {
+    margin-bottom: 0;
+    padding-bottom: 11px;
+}
+
+.phenom.mod-is-card.mod-unread .phenom-icon, 
+.phenom.mod-is-card .phenom-icon, 
+.phenom.mod-is-not-card.mod-unread .phenom-icon, 
+.phenom.mod-is-not-card .phenom-icon {
+    width: 24px;
+}
+
+/* list expansion */
+.list-wrapper.expanded {
+    position: absolute;
+    z-index: 500;
+    left: 0;
+    --width: 100vw;
+    width: var(--width);
+}
+
+.list-wrapper.expanded .list-cards {
+    display: grid;
+    grid-template-columns: repeat(var(--max-list-columns), 1fr);
+}
+
+.is-show-menu .list-wrapper.expanded {
+    --width: calc(100vw - 339px)
+}
+
+.list-wrapper.expanded .list-card {
+    width: calc(100% - 5px);
+    max-width: none;
+    max-height: 92px;
+    overflow: auto;
+}
+
+#board.has-expanded-list {
+    overflow-x: hidden;
+}
+
+.has-expanded-list .list-wrapper:not(.expanded) {
+    display: none !important;
 }
 
 /* misc */
