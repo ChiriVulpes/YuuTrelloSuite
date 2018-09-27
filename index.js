@@ -68,9 +68,9 @@ function extension() {
 		//
 
 		const previewElements = document.querySelectorAll(`
-		.directory-individual-listing .directory-listing-content img,
-		.attachment-image-preview
-	`);
+			.directory-individual-listing .directory-listing-content img,
+			.attachment-image-preview
+		`);
 		for (const previewElement of previewElements) {
 			if (previewElement.naturalWidth && previewElement.hasAttribute("src")) {
 				previewElement.style.setProperty("--ratio", `${previewElement.naturalHeight / previewElement.naturalWidth}`);
