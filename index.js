@@ -1,288 +1,249 @@
-////////////////////////////////////
-// Create the extra CSS for this extension
-//
+let interval = setInterval(() => {
+	if (!document.body) return;
 
-const style = document.createElement("style");
-style.id = "TrelloListToggle-styles";
-style.textContent = `
+	document.head.appendChild(style);
+	extension();
 
-/**
- * List Toggle Buttons
- */
+	clearInterval(interval);
+});
 
-#list-toggle-buttons-start ~ .board-header-btn, .birds-eye-button {
-    padding-right: 7px;
-}
 
-#list-toggle-buttons-start ~ .board-header-btn[list-visible="false"] {
-    opacity: .5;
-}
+function extension() {
 
-#list-toggle-buttons-start + .board-header-btn-divider {
-	display: none;
-}
-
-/**
- * Birds Eye View
- */
-
-.birds-eye-button {
-	 text-decoration: underline;
- }
-
-.birds-eye .list-card-details {
-    padding: 3px 3px 1px 6px;
-}
-
-.birds-eye .list-card {
-    margin-bottom: 5px;
-}
-
-.birds-eye .list-card-labels {
-    margin-top: -3px;
-    margin-bottom: 4px;
-}
-
-.birds-eye .card-label.mod-card-front {
-    border-radius: 0;
-    margin: 0;
-    height: 4px;
-}
-
-.birds-eye .badges {
-    margin-top: -3px;
-    margin-bottom: -3px;
-}
-
-.birds-eye .list-card-members .member {
-    width: 15px;
-    height: 15px;
-    background: none;
-    margin-bottom: 0;
-}
-
-.birds-eye .list-card-members .member-avatar {
-    width: 15px;
-    height: 15px;
-    top: -4px;
-    position: relative;
-}
-
-.birds-eye .badge {
-    margin-bottom: 0;
-}
-`;
-document.head.appendChild(style);
-
-////////////////////////////////////
-// Util/vars
-//
-
-let isDirty = false;
-
-let cachedList = [];
-
-const maxVisible = 0;
-let viewingMore = false;
-let needsRefresh = false;
-
-function appendDividerTo(element) {
-	divider = document.createElement("span");
-	divider.classList.add("board-header-btn-divider");
-	element.appendChild(divider);
-
-	return divider;
-}
-
-////////////////////////////////////
-// Our main loop
-//
-
-function refresh(data) {
 	////////////////////////////////////
-	// Click "Show More Labels" Automatically
+	// Fixes a trello bug that causes calendar days to sometimes not be openable
 	//
 
-	const showMoreLabelsButton = document.querySelector(".js-add-label + .js-show-more:not(.hide)");
-	if (showMoreLabelsButton) {
-		showMoreLabelsButton.click();
-	}
+	document.body.addEventListener("click", (event) => {
+		if (event.target) {
+			const day = event.target.closest(".calendar-day");
+			if (day) {
+				const activeDays = document.querySelectorAll(".calendar-day.active");
+				for (const activeDay of activeDays) activeDay.classList.remove("active");
 
-
-	/*
-	I couldn't get this working, but I'll save it in case I want to try again another time
-	
-	////////////////////////////////////
-	// Make "Add a card" default to the top of the list
-	//
-
-	const composer = document.querySelector(".card-composer:not(:first-child)");
-	if (composer) {
-		console.log("composer")
-		const ccmenu = document.querySelector(".card-composer .js-cc-menu");
-		if (ccmenu) {
-			ccmenu.click();
-			console.log("ccmenu")
-
-			const positionButton = document.querySelector(".pop-over-content .js-pos-selector");
-
-			if (positionButton) {
-				positionButton.click();
-				console.log("positionbutton")
-
-				const positionSelector = document.querySelector(".pop-over-content .js-select-position");
-
-				if (positionSelector) {
-					console.log("positionselector")
-					positionSelector.value = 0;
-					positionSelector.dispatchEvent(new Event("change"));
-				}
+				day.classList.add("active");
 			}
+
+			const closeButton = event.target.closest(".close-button");
+			if (closeButton) day.classList.remove("active");
 		}
-	}
-	*/
+	});
+
 
 
 	////////////////////////////////////
-	// List Toggles
+	// Util/vars
 	//
 
-	const boardHeader = document.querySelector(".board-header-btn-text");
-	if (!boardHeader) return;
+	let isDirty = false;
 
-	const board = boardHeader.textContent;
-
-	const boardData = data[board] === undefined ? data[board] = {} : data[board];
-
-
-	const lists = document.querySelectorAll(".list-header-name-assist");
-	if (cachedList.length != lists.length) {
-		needsRefresh = true;
-	} else {
-		for (const listTitle of lists) {
-			if (!cachedList.includes(listTitle.textContent)) {
-				needsRefresh = true;
-				break;
-			}
-		}
-	}
+	let needsRefresh = false;
+	let cachedList = [];
+	let maxListColumns = 0;
 
 
-	if (needsRefresh) {
-		needsRefresh = false;
 
-		console.log("refreshed");
+	////////////////////////////////////
+	// Our main loop
+	//
 
-		const toRemove = document.querySelectorAll("#list-toggle-buttons-start, #list-toggle-buttons-start ~ *, .birds-eye-button");
-		for (const element of toRemove) {
-			element.remove();
-		}
-
-		const buttonContainerLeft = document.querySelector(".board-header-btns.mod-left");
-		appendDividerTo(buttonContainerLeft).id = "list-toggle-buttons-start";
-
-		cachedList = [];
-
-		for (const listTitle of lists) {
-			cachedList.push(listTitle.textContent);
-			const list = listTitle.closest(".list-wrapper");
-			if (!list.hasAttribute("list-visible")) {
-				list.setAttribute("list-visible", boardData[listTitle.textContent] === undefined ? true : boardData[listTitle.textContent]);
-			}
-
-			const toggleButton = document.createElement("a");
-			toggleButton.classList.add("board-header-btn", "board-header-btn-without-icon");
-			toggleButton.textContent = listTitle.textContent;
-			toggleButton.href = "#";
-			toggleButton.setAttribute("list-visible", list.getAttribute("list-visible"));
-
-			if (viewingMore || cachedList.length < maxVisible) {
-				buttonContainerLeft.appendChild(toggleButton);
-			}
-
-			function updateListVisibility(isVisible) {
-				toggleButton.setAttribute("list-visible", `${isVisible}`);
-				list.setAttribute("list-visible", `${isVisible}`);
-				list.style.display = isVisible ? "inline-block" : "none";
-
-				if (boardData[listTitle.textContent] != isVisible) {
-					boardData[listTitle.textContent] = isVisible;
-					isDirty = true;
-				}
-			}
-
-			updateListVisibility(JSON.parse(toggleButton.getAttribute("list-visible")));
-
-			toggleButton.addEventListener("click", () => {
-				const isVisible = !JSON.parse(toggleButton.getAttribute("list-visible"));
-				updateListVisibility(isVisible);
-			});
+	function refresh(data) {
+		const style = document.querySelector("#yuus-trello-suite-styles");
+		if (style.parentElement.lastElementChild !== style) {
+			style.parentElement.appendChild(style);
 		}
 
 		////////////////////////////////////
-		// If there are too many lists to show all in one line, we make a button to toggle
-		// the visibility of the rest of them.
-		// Currently, the max number of lists is 0 (so it always happens). This is because of the
-		// members feature. In the future this should probably be done differently?
+		// Click "Show More Labels" Automatically
 		//
 
-		if (cachedList.length >= maxVisible) {
-			appendDividerTo(buttonContainerLeft);
-
-			const toggleMoreButton = document.createElement("a");
-			toggleMoreButton.classList.add("board-header-btn", "board-header-btn-without-icon");
-			toggleMoreButton.textContent = viewingMore ? "Hide List Toggles" : "Toggle Lists";
-			toggleMoreButton.href = "#";
-			buttonContainerLeft.appendChild(toggleMoreButton);
-
-			toggleMoreButton.addEventListener("click", () => {
-				viewingMore = !viewingMore;
-				needsRefresh = true;
-			});
+		const showMoreLabelsButton = document.querySelector(".js-add-label + .js-show-more:not(.hide)");
+		if (showMoreLabelsButton) {
+			showMoreLabelsButton.click();
 		}
+
+		////////////////////////////////////
+		// Prettier preview images
+		// Adds some data to powerup preview images, and removes the src attr so we can do some custom styling
+		//
+
+		const previewElements = document.querySelectorAll(`
+		.directory-individual-listing .directory-listing-content img,
+		.attachment-image-preview
+	`);
+		for (const previewElement of previewElements) {
+			if (previewElement.naturalWidth && previewElement.hasAttribute("src")) {
+				previewElement.style.setProperty("--ratio", `${previewElement.naturalHeight / previewElement.naturalWidth}`);
+				previewElement.style.setProperty("--img", `url("${previewElement.getAttribute("src")}")`);
+				previewElement.removeAttribute("src");
+			}
+		}
+
+
+
+		////////////////////////////////////
+		// If we're not in a board, we don't do anything else
+		//
+
+		const boardHeader = document.querySelector(".board-header-btn-text");
+		if (!boardHeader) return;
+
+		const boardName = boardHeader.textContent;
+
+		const boardData = data[boardName] === undefined ? data[boardName] = {} : data[boardName];
+
+
+		////////////////////////////////////
+		// We cache the names of all the visible lists, if one changes, we need to refresh
+		//
+
+		const lists = [...document.querySelectorAll(".list-header-name-assist")].map(list => list.textContent);
+		if (cachedList.length != lists.length) {
+			needsRefresh = true;
+		} else {
+			for (const listTitle of lists) {
+				if (!cachedList.includes(listTitle)) {
+					needsRefresh = true;
+					break;
+				}
+			}
+		}
+		cachedList = lists;
+
+
+		if (needsRefresh) {
+			needsRefresh = false;
+
+			console.log("refreshed");
+
+			for (const list of document.querySelectorAll(".list")) {
+
+				let options = list.querySelector(".list-view-options");
+				if (options) {
+					options.remove();
+				}
+
+				options = document.createElement("div");
+				options.classList.add("list-view-options");
+				list.appendChild(options);
+
+
+
+				////////////////////////////////////
+				// Adds a button for expanding a list to fill all available space (makes sorting cards easier)
+				//
+
+				function expandList(list) {
+					list.classList.toggle("expanded");
+					list.parentElement.classList.toggle("has-expanded-list");
+				}
+
+				const expand = document.createElement("button");
+				expand.classList.add("list-view-option", "list-view-option-expand");
+				options.appendChild(expand);
+				expand.addEventListener("click", () => {
+					expandList(list.parentElement);
+				});
+
+				const closeListExpansion = document.createElement("span");
+				closeListExpansion.classList.add("icon-lg", "list-view-option-expanded-close");
+				options.appendChild(closeListExpansion);
+				closeListExpansion.addEventListener("click", () => {
+					expandList(list.parentElement);
+				});
+
+
+
+				////////////////////////////////////
+				// Adds a button for collapsing a list
+				//
+				const listName = list.querySelector(".list-header-name-assist").textContent;
+
+				list.parentElement.classList.toggle("list-hidden", boardData[listName] === undefined ? false : !boardData[listName]);
+
+				function toggleList() {
+					list.parentElement.classList.toggle("list-hidden");
+
+					const isVisible = !list.parentElement.classList.contains("list-hidden");
+					if (boardData[listName] != isVisible) {
+						boardData[listName] = isVisible;
+						isDirty = true;
+
+						console.log(`Set "${listName}" to ${isVisible ? "visible" : "hidden"}`);
+					}
+				}
+
+				const hide = document.createElement("button");
+				hide.classList.add("list-view-option", "list-view-option-hide");
+				options.appendChild(hide);
+				hide.addEventListener("click", toggleList);
+
+				const show = document.createElement("span");
+				show.classList.add("icon-lg", "list-view-option-show");
+				options.appendChild(show);
+				show.addEventListener("click", toggleList);
+			}
+		}
+
+
+
+		////////////////////////////////////
+		// Set the number of list columns that could be visible at one time
+		//
+
+		const board = document.querySelector("#board");
+		if (board) {
+			const newMaxListColumns = Math.floor(board.getBoundingClientRect().width / 280);
+			if (maxListColumns !== newMaxListColumns) {
+				document.documentElement.style.setProperty("--max-list-columns", maxListColumns = newMaxListColumns);
+			}
+		}
+
 
 
 		////////////////////////////////////
 		// Birds Eye Button
 		//
 
-		const buttonContainerRight = document.querySelector(".board-header-btns.mod-right");
-		const birdsEyeButton = document.createElement("a");
-		birdsEyeButton.classList.add("board-header-btn", "board-header-btn-without-icon", "birds-eye-button");
-		birdsEyeButton.textContent = boardData.__isBirdsEye === true ? "Normal Size" : "Compressed Size";
-		birdsEyeButton.href = "#";
-		buttonContainerRight.insertBefore(birdsEyeButton, document.querySelector(".board-header-btns.mod-right > .js-plugin-header-btns"));
-
-		document.body.classList.toggle("birds-eye", boardData.__isBirdsEye === true);
-		birdsEyeButton.addEventListener("click", () => {
-			document.body.classList.toggle("birds-eye");
-			isDirty = true;
-			boardData.__isBirdsEye = document.body.classList.contains("birds-eye");
+		let birdsEyeButton = document.querySelector(".birds-eye-button");
+		if (!birdsEyeButton) {
+			const buttonContainerRight = document.querySelector(".board-header-btns.mod-right");
+			const birdsEyeButton = document.createElement("a");
+			birdsEyeButton.classList.add("board-header-btn", "board-header-btn-without-icon", "birds-eye-button");
 			birdsEyeButton.textContent = boardData.__isBirdsEye === true ? "Normal Size" : "Compressed Size";
-		});
-	}
+			birdsEyeButton.href = "#";
+			buttonContainerRight.insertBefore(birdsEyeButton, document.querySelector(".board-header-btns.mod-right > .js-plugin-header-btns"));
 
+			document.body.classList.toggle("birds-eye", boardData.__isBirdsEye === true);
+			birdsEyeButton.addEventListener("click", () => {
+				document.body.classList.toggle("birds-eye");
+				isDirty = true;
+				boardData.__isBirdsEye = document.body.classList.contains("birds-eye");
+				birdsEyeButton.textContent = boardData.__isBirdsEye === true ? "Normal Size" : "Compressed Size";
+			});
+		}
+
+
+
+		////////////////////////////////////
+		// Save extension data
+		//
+
+		if (isDirty) {
+			isDirty = false;
+			chrome.storage.sync.set({ "TrelloListToggle:data": JSON.stringify(data) }, () => {
+				console.log("saved");
+			});
+		}
+	}
 
 	////////////////////////////////////
-	// Save extension data
+	// Get the data, wait one second, then refresh every 20ms
 	//
 
-	if (isDirty) {
-		isDirty = false;
-		chrome.storage.sync.set({ "TrelloListToggle:data": JSON.stringify(data) }, () => {
-			console.log("saved");
-		});
-	}
-}
-
-////////////////////////////////////
-// Get the data, wait one second, then refresh every 20ms
-//
-
-chrome.storage.sync.get("TrelloListToggle:data", (data) => {
-	data = data["TrelloListToggle:data"];
-	data = data ? JSON.parse(data) : {};
-	setTimeout(() => {
+	chrome.storage.sync.get("TrelloListToggle:data", (data) => {
+		data = data["TrelloListToggle:data"];
+		data = data ? JSON.parse(data) : {};
 		setInterval(refresh.bind(null, data), 20);
-	}, 1000);
-});
+	});
+}

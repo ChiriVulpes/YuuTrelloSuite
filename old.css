@@ -1,0 +1,16 @@
+
+/**
+ * List Toggle Buttons
+ */
+
+#list-toggle-buttons-start ~ .board-header-btn, .birds-eye-button {
+    padding-right: 7px;
+}
+
+#list-toggle-buttons-start ~ .board-header-btn[list-visible="false"] {
+    opacity: .5;
+}
+
+#list-toggle-buttons-start + .board-header-btn-divider {
+	display: none;
+}
