@@ -802,22 +802,28 @@ pre::-webkit-scrollbar-track-piece,
 
 .u-fancy-scrollbar::-webkit-scrollbar-thumb:vertical,
 .u-fancy-scrollbar::-webkit-scrollbar-thumb:horizontal,
+.u-fancy-scrollbar::-webkit-scrollbar-thumb,
 pre::-webkit-scrollbar-thumb:vertical,
 pre::-webkit-scrollbar-thumb:horizontal,
+pre::-webkit-scrollbar-thumb,
 .pop-over textarea::-webkit-scrollbar-thumb:vertical,
 .pop-over textarea::-webkit-scrollbar-thumb:horizontal,
+.pop-over textarea::-webkit-scrollbar-thumb,
 .directory-body::-webkit-scrollbar-thumb {
-    background: var(--bg-scrollbar-thumb);
+    background: var(--bg-scrollbar-thumb) !important;
 }
 
 .u-fancy-scrollbar::-webkit-scrollbar-thumb:vertical:hover,
 .u-fancy-scrollbar::-webkit-scrollbar-thumb:horizontal:hover,
+.u-fancy-scrollbar::-webkit-scrollbar-thumb:hover,
 pre::-webkit-scrollbar-thumb:vertical:hover,
 pre::-webkit-scrollbar-thumb:horizontal:hover,
+pre::-webkit-scrollbar-thumb:hover,
 .pop-over textarea::-webkit-scrollbar-thumb:vertical:hover,
 .pop-over textarea::-webkit-scrollbar-thumb:horizontal:hover,
+.pop-over textarea::-webkit-scrollbar-thumb:hover,
 .directory-body::-webkit-scrollbar-thumb:hover {
-    background: var(--bg-scrollbar-thumb-hover);
+    background: var(--bg-scrollbar-thumb-hover) !important;
 }
 
 .list-card::-webkit-scrollbar-track-piece {
@@ -1248,6 +1254,64 @@ pre::-webkit-scrollbar-thumb:horizontal:hover,
 .list-header textarea {
     height: 32px !important;
     overflow: hidden !important;
+}
+
+/* add a name tooltip for hidden lists (it's kinda hard to read vertical names) */
+.list-wrapper.list-hidden:hover {
+    z-index: 1000;
+    animation: list-show .2s linear 1;
+}
+
+@keyframes list-show {
+    0% {
+        z-index: 999;
+    }
+    99% {
+        z-index: 999;
+    }
+    100% {
+        z-index: 1000;
+    }
+}
+
+.list-wrapper.list-hidden {
+    z-index:999;
+    animation: list-hide .2s linear 1;
+}
+
+@keyframes list-hide {
+    0% {
+        z-index: 1000;
+    }
+    99% {
+        z-index: 1000;
+    }
+    100% {
+        z-index: 999;
+    }
+}
+
+.list-wrapper.list-hidden .list-header-name-assist {
+    display: block;
+    font-size: inherit;
+    transform: rotate(-90deg);
+    top: 0px;
+    left: 5px;
+    position: absolute;
+    transform-origin: 0% 0%;
+    z-index: 999999;
+    background: var(--bg-popover);
+    transition: opacity .2s ease-in-out;
+    opacity: 0;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid var(--b-popover);
+    box-shadow: 0 2px 4px -1px #0008, inset 0 0 0 1px #afe2;
+}
+
+.list-wrapper.list-hidden:hover .list-header-name-assist {
+    transition: opacity .3s ease-in-out .2s;
+    opacity: 1;
 }
 
 
