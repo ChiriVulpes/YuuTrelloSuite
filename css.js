@@ -48,6 +48,7 @@ style.textContent = `
     --bg-powerup: #2a3039;
     --bg-powerup-hover: #2e353e;
     --bg-quiet: #0004;
+    --bg-quiet-hover: #0002;
     --bg-count: var(--bg-quiet);
     --bg-calendar: #1c2022;
     --bg-calendar-day-cell: transparent;
@@ -487,6 +488,14 @@ textarea.checklist-new-item-text:hover {
 
 .sidebar-section-header-toggle-icon:hover {
     background-color: var(--bg-quiet);
+}
+
+.known-service-link {
+    background: var(--bg-quiet);
+}
+
+.known-service-link:hover {
+    background: var(--bg-quiet-hover);
 }
 
 
@@ -1110,6 +1119,10 @@ pre::-webkit-scrollbar-thumb:hover,
 /* misc */
 .calendar-day.today {
     box-shadow: inset 0 0 0 1px #afe2;
+}
+
+.known-service-link {
+    padding: 4px 7px 7px;
 }
 
 /************************************************/
