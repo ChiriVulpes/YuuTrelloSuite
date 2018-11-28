@@ -3,12 +3,20 @@
 	"name": "Yuu's Trello Suite",
 	"short_name": "YuuTrelloSuite",
 	"version": "1.0.0",
-	"content_scripts": [{
-		"matches": ["https://trello.com/*"],
-		"run_at": "document_start",
-		"js": ["css.js", "index.js"],
-		"all_frames": true
-	}],
+	"content_scripts": [
+		{
+			"matches": ["https://trello.com/*"],
+			"run_at": "document_start",
+			"js": ["css.js", "index.js"],
+			"all_frames": true
+		},
+		{
+			"matches": ["https://github.trello.services/*"],
+			"run_at": "document_start",
+			"js": ["github.css.js", "github.js"],
+			"all_frames": true
+		}
+	],
 	
 	"permissions": [
 		"storage"	

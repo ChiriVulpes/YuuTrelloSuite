@@ -498,6 +498,19 @@ textarea.checklist-new-item-text:hover {
     background: var(--bg-quiet-hover);
 }
 
+.notice-of-tos-change-container {
+    background-color: var(--bg-quiet);
+}
+
+.board-menu-navigation-item.mod-power-up-slot .board-menu-navigation-item-link-icon {
+    background: var(--bg-quiet);
+    border-color: var(--c-quiet);
+}
+
+.checklist-item.ui-sortable-helper {
+    background-color: var(--bg-quiet) !important;
+}
+
 
 
 /************************************************/
@@ -518,6 +531,7 @@ textarea.checklist-new-item-text:hover {
     --c-pre-code: #5f9edb;
     --c-count: #cfe4;
     --c-board-button-team: #cfe4;
+    --c-quiet: #6b808c;
 }
 
 .list-card-title {
@@ -744,6 +758,18 @@ pre code {
 
 .sidebar-section-header-title.mod-clickable:hover {
     color: var(--c-text-hover);
+}
+
+.board-menu-navigation-item.mod-power-up-slot .board-menu-navigation-item-link {
+    color: var(--c-quiet);
+}
+
+.board-menu-navigation-item.mod-power-up-slot .board-menu-navigation-item-link.mod-enabled {
+    color: var(--c-a);
+}
+
+.board-menu-navigation-item.mod-power-up-slot .board-menu-navigation-item-link.mod-enabled:hover {
+    color: var(--c-a-hover);
 }
 
 
@@ -1125,6 +1151,15 @@ pre::-webkit-scrollbar-thumb:hover,
     padding: 4px 7px 7px;
 }
 
+.board-menu-navigation-item.mod-power-up-slot .board-menu-navigation-item-link-icon.mod-enabled[style*="github.trello.services"] {
+    filter: invert(100%);
+    opacity: .7;
+}
+
+.board-menu-navigation-item.mod-power-up-slot .board-menu-navigation-item-link.mod-enabled {
+    font-weight: bold;
+}
+
 /************************************************/
 /* List view options                            */
 /************************************************/
@@ -1140,7 +1175,7 @@ pre::-webkit-scrollbar-thumb:hover,
     left: 100%;
     width: 50px;
     background: var(--bg-list-view-options);
-    z-index: 50;
+    z-index: 5000;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
     padding: 10px;
