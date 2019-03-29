@@ -1221,19 +1221,19 @@ pre::-webkit-scrollbar-thumb:hover,
 }
 
 .list-view-option-expand::before {
-    content: "\\E90B";
+    content: "\\E95D";
 }
 
 .list-view-option-expanded-close::before {
-    content: "\\E917";
+    content: "\\E951";
 }
 
 .list-view-option-hide::before {
-    content: "\\E908";
+    content: "\\E960";
 }
 
 .list-view-option-show::before {
-    content: "\\E941";
+    content: "\\E93F";
 }
 
 .list-wrapper.expanded .list-view-options {

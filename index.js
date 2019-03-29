@@ -140,6 +140,7 @@ function extension() {
 
 				const expand = document.createElement("button");
 				expand.classList.add("list-view-option", "list-view-option-expand");
+				expand.setAttribute("title", "Grid View");
 				options.appendChild(expand);
 				expand.addEventListener("click", () => {
 					expandList(list.parentElement);
@@ -147,6 +148,7 @@ function extension() {
 
 				const closeListExpansion = document.createElement("span");
 				closeListExpansion.classList.add("icon-lg", "list-view-option-expanded-close");
+				closeListExpansion.setAttribute("title", "Close Grid View");
 				options.appendChild(closeListExpansion);
 				closeListExpansion.addEventListener("click", () => {
 					expandList(list.parentElement);
@@ -175,11 +177,13 @@ function extension() {
 
 				const hide = document.createElement("button");
 				hide.classList.add("list-view-option", "list-view-option-hide");
+				hide.setAttribute("title", "Collapse");
 				options.appendChild(hide);
 				hide.addEventListener("click", toggleList);
 
 				const show = document.createElement("span");
 				show.classList.add("icon-lg", "list-view-option-show");
+				show.setAttribute("title", "Expand");
 				options.appendChild(show);
 				show.addEventListener("click", toggleList);
 			}
